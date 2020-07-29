@@ -27,7 +27,7 @@
 
   /* Set up the initial map center and zoom level */
   var map = L.map('map', {
-    center: [-121.95716857910155,37.35105530964274], // EDIT latitude, longitude to re-center map
+    center: [37.35105530964274,-121.95716857910155], // EDIT latitude, longitude to re-center map
     zoom: 12,  // EDIT from 1 to 18 -- decrease to zoom out, increase to zoom in
     scrollWheelZoom: true
   });
@@ -38,7 +38,7 @@
   }).addTo(map);
 
   /* Display a point marker with pop-up text */
-  L.marker([-121.95716857910155,37.35105530964274]).addTo(map) // EDIT latitude, longitude to re-position marker
+  L.marker([37.35105530964274,-121.95716857910155]).addTo(map) // EDIT latitude, longitude to re-position marker
   .bindPopup("text here"); // EDIT pop-up text message
   
   L.polygon([
