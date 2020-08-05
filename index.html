@@ -67,6 +67,46 @@ const zip = "https://opendata.arcgis.com/datasets/cb9923f1ff0941d2b613ba75e40a44
                37.25164721344384,-122.15354919433594
 
             ]).addTo(map).bindPopup("Santa Clara");
+
+
+var geojson = {
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {},
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -122.17071533203125,
+              37.312836976839144
+            ],
+            [
+              -121.80473327636719,
+              37.312836976839144
+            ],
+            [
+              -121.80473327636719,
+              37.47213335591262
+            ],
+            [
+              -122.17071533203125,
+              37.47213335591262
+            ],
+            [
+              -122.17071533203125,
+              37.312836976839144
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+};
+
+  L.geoJSON(geojson).addTo(map);
 var popup = L.popup();
 function onMapClick(e) {
     popup
