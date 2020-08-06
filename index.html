@@ -44,36 +44,9 @@ const zip = "https://opendata.arcgis.com/datasets/cb9923f1ff0941d2b613ba75e40a44
 
   /* Display a point marker with pop-up text */
   L.marker([37.35105530964274,-121.95716857910155]).addTo(map).bindPopup("text here"); // EDIT pop-up text message
-  L.polygon([
-              37.25164721344384,-122.15354919433594
-
-            ],
-            [
-              37.25164721344384,
-              -121.75872802734375
-            ],
-            [
-              37.44488060256697,
-              -121.75872802734375
-
-            ],
-            [
-              37.44488060256697,-122.15354919433594
-
-            ],
-            [
-               37.25164721344384,-122.15354919433594
-
-            ]).addTo(map).bindPopup("Santa Clara");
-
-
 var geojson = [{
-  "type": "FeatureCollection",
-  "features": [
-    {
-      "type": "Feature",
-      "properties": {},
-      "geometry": {
+  "type": "Feature",
+  "geometry": {
         "type": "Polygon",
         "coordinates": [[
             [
@@ -100,8 +73,7 @@ var geojson = [{
         ]
       }
     }
-  ]
-}];
+  ];
 
 L.geoJSON(geojson).addTo(map);
 //var popup = L.popup();
