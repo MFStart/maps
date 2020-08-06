@@ -69,7 +69,7 @@ const zip = "https://opendata.arcgis.com/datasets/cb9923f1ff0941d2b613ba75e40a44
             ]).addTo(map).bindPopup("Santa Clara");
 
 
-var geojson = {
+var geojson = [{
   "type": "FeatureCollection",
   "features": [
     {
@@ -77,8 +77,7 @@ var geojson = {
       "properties": {},
       "geometry": {
         "type": "Polygon",
-        "coordinates": [
-          [
+        "coordinates": [[
             [
               -122.17071533203125,
               37.312836976839144
@@ -104,9 +103,9 @@ var geojson = {
       }
     }
   ]
-};
+}];
 
-  L.geoJSON(geojson).addTo(map);
+L.geoJSON(geojson).addTo(map);
 var popup = L.popup();
 function onMapClick(e) {
     popup
