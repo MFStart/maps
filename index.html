@@ -24,14 +24,8 @@
 
   <!-- Create the interactive map content with JavaScript (.js) -->
   <script>
-const zip = "https://opendata.arcgis.com/datasets/cb9923f1ff0941d2b613ba75e40a4440_0.geojson"
-
-
-
-
-
   /* Set up the initial map center and zoom level */
-  var map = L.map('map', {
+    var map = L.map('map', {
     center: [37.35105530964274,-121.95716857910155], // EDIT latitude, longitude to re-center map
     zoom: 12,  // EDIT from 1 to 18 -- decrease to zoom out, increase to zoom in
     scrollWheelZoom: true
@@ -44,38 +38,10 @@ const zip = "https://opendata.arcgis.com/datasets/cb9923f1ff0941d2b613ba75e40a44
 
   /* Display a point marker with pop-up text */
   L.marker([37.35105530964274,-121.95716857910155]).addTo(map).bindPopup("text here"); // EDIT pop-up text message
-var geojson = [{
-  "type": "Feature",
-  "geometry": {
-        "type": "Polygon",
-        "coordinates": [[
-            [
-              -122.17071533203125,
-              37.312836976839144
-            ],
-            [
-              -121.80473327636719,
-              37.312836976839144
-            ],
-            [
-              -121.80473327636719,
-              37.47213335591262
-            ],
-            [
-              -122.17071533203125,
-              37.47213335591262
-            ],
-            [
-              -122.17071533203125,
-              37.312836976839144
-            ]
-          ]
-        ]
-      }
-    }
-  ];
+  L.esri.featureLayer({ url: 'https://services.arcgis.com/NkcnS0qk4w2wasOJ/ArcGIS/rest/services/COVIDCasesByZipCode/FeatureServer/0' }).addTo(map);
 
-L.geoJSON(geojson).addTo(map);
+
+//L.geoJSON(geojson).addTo(map).bindPopup("Area of interest");
 //var popup = L.popup();
 /*function onMapClick(e) {
     popup
