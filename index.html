@@ -7,8 +7,11 @@
 
   <!-- Load Leaflet code library: see http://leafletjs.com/download.html -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css">
-  <script src="https://unpkg.com/leaflet@1.0.1/dist/leaflet.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.6.0/leaflet.js"></script>
 
+   <!-- Load Esri Leaflet from CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/esri-leaflet/2.5.0/esri-leaflet.js"></script>
+  <script src="https://unpkg.com/esri-leaflet-renderers@2.0.6"></script>
   <!-- Position the map and title with Cascading Style Sheet (.css) -->
   <style>
   body { margin:0; padding:0; }
@@ -30,26 +33,16 @@
     zoom: 12,  // EDIT from 1 to 18 -- decrease to zoom out, increase to zoom in
     scrollWheelZoom: true
   });
+  var zipcode = L.esri.featureLayer({ url: 'https://services.arcgis.com/NkcnS0qk4w2wasOJ/ArcGIS/rest/services/COVIDCasesByZipCode/FeatureServer/0' }).addTo(map);
 
   /* display basemap tiles -- see others at https://leaflet-extras.github.io/leaflet-providers/preview/ */
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, &copy; <a href="https://carto.com/attribution">CARTO</a>'
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', { attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, &copy; <a href="https://carto.com/attribution">CARTO</a>'
   }).addTo(map);
-
+var popupTemplate = "<h3>{zipcode}</h3><br>Population: {Population}</br>";
   /* Display a point marker with pop-up text */
   L.marker([37.35105530964274,-121.95716857910155]).addTo(map).bindPopup("text here"); // EDIT pop-up text messag
-  L.esri.featureLayer({ url: 'https://services.arcgis.com/NkcnS0qk4w2wasOJ/ArcGIS/rest/services/COVIDCasesByZipCode/FeatureServer/0' }).addTo(map);
-//L.geoJSON(geojson).addTo(map).bindPopup("Area of interest");
-//var popup = L.popup();
-/*function onMapClick(e) {
-    popup
-        .setLatLng(e.latlng)
-        .setContent("You clicked the map at " + e.latlng.toString())
-        .openOn(map);
-}
-
-map.on('click', onMapClick);*/
-
+  zipcode.bindPopup(function (x){
+    return L.Util.template(popupTemplate, x.feature.properties)});
   </script>
 </body>
 </html>
