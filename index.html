@@ -7,7 +7,7 @@
 
   <!-- Load Leaflet code library: see http://leafletjs.com/download.html -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css">
-  <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet@1.0.1/dist/leaflet.js"></script>
 
   <!-- Position the map and title with Cascading Style Sheet (.css) -->
   <style>
@@ -19,7 +19,7 @@
 <body>
 
   <!-- Display the map and title with HTML division tags  -->
-  <div id="map-title">Test title</div>
+  <div id="map-title">Covid map</div>
   <div id="map"></div>
 
   <!-- Create the interactive map content with JavaScript (.js) -->
@@ -37,10 +37,8 @@
   }).addTo(map);
 
   /* Display a point marker with pop-up text */
-  L.marker([37.35105530964274,-121.95716857910155]).addTo(map).bindPopup("text here"); // EDIT pop-up text message
+  L.marker([37.35105530964274,-121.95716857910155]).addTo(map).bindPopup("text here"); // EDIT pop-up text messag
   L.esri.featureLayer({ url: 'https://services.arcgis.com/NkcnS0qk4w2wasOJ/ArcGIS/rest/services/COVIDCasesByZipCode/FeatureServer/0' }).addTo(map);
-
-
 //L.geoJSON(geojson).addTo(map).bindPopup("Area of interest");
 //var popup = L.popup();
 /*function onMapClick(e) {
