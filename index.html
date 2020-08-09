@@ -12,6 +12,7 @@
    <!-- Load Esri Leaflet from CDN -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/esri-leaflet/2.5.0/esri-leaflet.js"></script>
   <script src="https://unpkg.com/esri-leaflet-renderers@2.0.6"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-omnivore/0.3.4/leaflet-omnivore.min.js"></script>
   <!-- Position the map and title with Cascading Style Sheet (.css) -->
   <style>
   body { margin:0; padding:0; }
@@ -27,6 +28,7 @@
 
   <!-- Create the interactive map content with JavaScript (.js) -->
   <script>
+    //var covidcsv = omnivore.csv('covidbyzip.csv').addTo(map);
   /* Set up the initial map center and zoom level */
     var map = L.map('map', {
     center: [37.35105530964274,-121.95716857910155], // EDIT latitude, longitude to re-center map
@@ -38,11 +40,31 @@
   /* display basemap tiles -- see others at https://leaflet-extras.github.io/leaflet-providers/preview/ */
   L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', { attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, &copy; <a href="https://carto.com/attribution">CARTO</a>'
   }).addTo(map);
-var popupTemplate = "<h3>{zipcode}</h3><br>Population: {Population}</br>";
+  var popupTemplate = "<h3>{zipcode}</h3><br>Population: {Population}</br>";
   /* Display a point marker with pop-up text */
   L.marker([37.35105530964274,-121.95716857910155]).addTo(map).bindPopup("text here"); // EDIT pop-up text messag
   zipcode.bindPopup(function (x){
     return L.Util.template(popupTemplate, x.feature.properties)});
+
+    /* Control panel to display map layers */
+  var controlLayers = L.control.layers( null, null, {
+    position: "topright",
+    collapsed: false
+   }).addTo(map);
+
+   /* Carto light-gray basemap tiles with labels */
+   var light = L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png', {
+     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, &copy; <a href="https://carto.com/attribution">CARTO</a>'
+   }); // EDIT - insert or remove ".addTo(map)" before last semicolon to display by default
+    controlLayers.addBaseLayer(light, 'Carto Light basemap');
+   /* Stamen colored terrain basemap tiles with labels */
+   var terrain = L.tileLayer('https://stamen-tiles.a.ssl.fastly.net/terrain/{z}/{x}/{y}.png', {
+     attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.'
+   }).addTo(map); // EDIT - insert or remove ".addTo(map)" before last semicolon to display by default
+    controlLayers.addBaseLayer(terrain, 'Stamen Terrain basemap');
+
+
+
   </script>
 </body>
 </html>
