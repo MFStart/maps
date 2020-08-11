@@ -11,17 +11,25 @@ d3.text("covidbyzip.csv").then(function (data){
         .text(function(d) { return d; })
         .style("border", "1px black solid")
         .style("padding", "5px")
-        .style("background-color", "lightgray")
+        .style("background-color", 'steelblue')
         .style("font-weight", "bold")
         .style("text-transform", "uppercase");
+    //body
     table.append("tbody")
         .selectAll("tr").data(rows.slice(1))
         .enter().append("tr")
+        .on('mouseover',function(d) {
+            d3.select(this).style("background-color","orange")})
+        .on("mouseout",function(d){
+          d3.select(this)
+          .style("background-color","transparent");
+        })
         .selectAll("td")
         .data(function(d){return d;})
         .enter().append("td")
         .style("border", "1px black solid")
         .style("padding", "5px")
         .text(function(d){return d;})
-        .style("font-size", "12px");
+        .style("font-size", "12px")
+
       });
