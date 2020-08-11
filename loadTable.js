@@ -1,19 +1,27 @@
-d3.text("covidbyzip.csv", function(datasetText) {
-var parsedCSV = d3.csv.parseRows(datasetText);
-var sampleHTML = d3.select("#viz")
-    .append("table")
+d3.text("covidbyzip.csv").then(function (data){
+    var rows  = d3.csvParseRows(data);
+    table = d3.select('body').append('table')
     .style("border-collapse", "collapse")
-    .style("border", "2px black solid")
-    .selectAll("tr")
-    .data(parsedCSV)
-    .enter().append("tr")
-    .selectAll("td")
-    .data(function(d){return d;})
-    .enter().append("td")
-    .style("border", "1px black solid")
-    .style("padding", "5px")
-    .on("mouseover", function(){d3.select(this).style("background-color", "aliceblue")})
-    .on("mouseout", function(){d3.select(this).style("background-color", "white")})
-    .text(function(d){return d;})
-    .style("font-size", "12px");
-});
+    .style("border", "2px black solid");
+    // headers
+    table.append("thead").append("tr")
+        .selectAll("th")
+        .data(rows[0])
+        .enter().append("th")
+        .text(function(d) { return d; })
+        .style("border", "1px black solid")
+        .style("padding", "5px")
+        .style("background-color", "lightgray")
+        .style("font-weight", "bold")
+        .style("text-transform", "uppercase");
+    table.append("tbody")
+        .selectAll("tr").data(rows.slice(1))
+        .enter().append("tr")
+        .selectAll("td")
+        .data(function(d){return d;})
+        .enter().append("td")
+        .style("border", "1px black solid")
+        .style("padding", "5px")
+        .text(function(d){return d;})
+        .style("font-size", "12px");
+      });

@@ -8,21 +8,20 @@
   <!-- Load Leaflet code library: see http://leafletjs.com/download.html -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.6.0/leaflet.js"></script>
+
+  <!-- load d3 for table display-->
   <script src="https://d3js.org/d3.v5.js"></script>
-   <!-- Load Esri Leaflet from CDN -->
+  <!-- Load Esri Leaflet from CDN -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/esri-leaflet/2.5.0/esri-leaflet.js"></script>
   <script src="https://unpkg.com/esri-leaflet-renderers@2.0.6"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-omnivore/0.3.4/leaflet-omnivore.min.js"></script>
   <!-- Position the map and title with Cascading Style Sheet (.css) -->
-  <style>
-  body { margin:0; padding:0; }
-  #map { position: absolute; top:0; bottom:0; right:0; left:0; }
-  #map-title { position: relative; margin-top: 10px; margin-left: 50px; float: left; background: white; border: 2px solid rgba(0,0,0,0.2); padding: 6px 8px; font-family: Helvetica; font-weight: bold; font-size: 24px; z-index: 800; }
-  </style>
+
 </head>
 <body>
-  <div id="map" stlye="width: 80%; height; 600px">Covid map</div>
-  <script src = "map.js"></script>
+  <div id="map" style="width: 80%; height: 600px">Covid map</div>
+  <script type= "text/javascript" src = "map.js"></script>
+  <script type= "text/javascript" src = "loadTable.js"></script>
 
 
 </body>
