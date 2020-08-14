@@ -28,18 +28,12 @@ zipcode.bindPopup(function (x) {
   return L.Util.template(popupTemplate, x.feature.properties);
 });
 
-/*
+
 
 zipcode.on('mouseover', function (e) {
   document.getElementById('info-pane').innerHTML = e.layer.feature.properties.zipcode;
   var layer = e.target;
-  layer.setStyle({
-    color: '#9D78D2',
-    weight: 5,
-    opacity: 1
-  });
 });
-*/
 
 /*function query_zipcode(x) {
 
