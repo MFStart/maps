@@ -8,7 +8,11 @@
   <!-- Load Leaflet code library: see http://leafletjs.com/download.html -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.6.0/leaflet.js"></script>
+  <!-- Add renderor -->
+  <script src="https://unpkg.com/esri-leaflet-renderers@2.0.6"></script>
 
+  <!-- Jquery for geojson-->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
   <!-- load d3 for table display-->
   <script src="https://d3js.org/d3.v5.js"></script>
   <!-- Load Esri Leaflet from CDN -->
@@ -16,23 +20,19 @@
   <script src="https://unpkg.com/esri-leaflet-renderers@2.0.6"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-omnivore/0.3.4/leaflet-omnivore.min.js"></script>
   <!-- Position the map and title with Cascading Style Sheet (.css) -->
-
+  <link rel="stylesheet" href="table.css" type="text/css">
 </head>
+<style>
+
+</style>
 <body>
-  <style>
-    #info-pane {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      z-index: 300;
-      padding: 1em;
-      background: white;
-    }
-  </style>
+  <header><h1>SCC Covid Map</h1>
+  </header>
   <div id="info-pane" class="leaflet-bar">Hover to Inspect</div>
-  <div id="map" style="width: 80%; height: 600px">Covid map</div>
-  <div id ='table' style = 'width: 100%';>
+  <div id="map" style="width: 80%; height: 600px"></div>
+  <div id="covidtable"></div>
   <script type= "text/javascript" src = "map.js"></script>
+  <script type="text/javascript" src="https://d3js.org/d3.v3.min.js"></script>
   <script type= "text/javascript" src = "loadTable.js"></script>
 
 
