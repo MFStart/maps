@@ -1,4 +1,4 @@
-d3.csv("covidbyzip.csv", function(data) {
+d3.json("https://data.sccgov.org/resource/j2gj-bg6c.json", function(data) {
     var sortAscending = true;
     var keep_click = false;
     var table = d3.select('#covidtable').append('table');
@@ -28,7 +28,6 @@ d3.csv("covidbyzip.csv", function(data) {
 		  var rows = table.append('tbody').selectAll('tr')
 		               .data(data).enter()
 		               .append('tr');
-
 		  rows.selectAll('td')
 		    .data(function (d) {
 		    	return titles.map(function (k) {
