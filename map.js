@@ -111,6 +111,7 @@ $.when(zip).done(function(){
   layer.bindPopup('<h3>'+feature.properties.ZCTA+'</h3><p>Population: '+feature.properties.POPCOUNT+'</p>')
   layer.addEventListener('mouseover', highlightfeature);
   layer.addEventListener('mouseout',function (d){zipshape.resetStyle(d.target);})
+  layer.addEventListener('click',function (d){map.panTo(d.target.getBounds().getCenter());})
   }}).addTo(map);
   /*
   zipshape.eachLayer(function (lyr) {

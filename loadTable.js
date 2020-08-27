@@ -1,3 +1,4 @@
+//live santa clara dataType
 d3.json("https://data.sccgov.org/resource/j2gj-bg6c.json", function(data) {
     var sortAscending = true;
     var keep_click = false;
