@@ -7,27 +7,36 @@
     (x > 10 && x < 50) ? '#ffffb2':
                     '#ffffcc';
 }
+/* click on table zoom to map
+function zoomto(zip) {
+  var zipcode = zip;
+  var map = document.querySelector('#map')._leaflet_map;
+  alert(map.zipshape);
+  //map.panTo(d.target.getBounds().getCenter());
+}
+*/
 
-function style(f) {
+function style(c) {
   return {
-    fillColor: getcolor(f.properties.POPCOUNT),
-    weight: 2,
-    opacity: 1,
-    color: 'transparent',
-    dashArray: '3',
-    fillOpacity: 0.7
+    fillColor: getcolor(c),
+    weight: 2
   };
+  }
 
-}
-let hoverstyle ={
+let hoverstyle = {
   color: 'yellow',
-  weight: 4
-}
-function highlightfeature(d){
+  weight: 3
+  };
+function highlightfeature(d) {
   d.target.setStyle(hoverstyle);
   d.target.bringtoFront();
 }
 
+function callmap(d){
+  //var tzip = d.value;
+  alert(d);
+}
+/*
 function featureJoinByProperty(fProps, dTable, joinKey,tablekey) {
   var keyVal = fProps[joinKey];
   var match = {};
@@ -42,7 +51,11 @@ function featureJoinByProperty(fProps, dTable, joinKey,tablekey) {
     }
   }
 }
+*/
 
+
+//stored stuff in json
+var table = [];
 /*
 //gets all the individual zipcode
 zipcode.eachFeature(function (lyr) {
@@ -58,6 +71,7 @@ var zipcode = $.ajax({
 */
 
 
+
 //L.geoJson(zipcode).addto(map);
 var zip = $.ajax({
   url:"https://opendata.arcgis.com/datasets/cb9923f1ff0941d2b613ba75e40a4440_0.geojson",
@@ -67,7 +81,8 @@ var zip = $.ajax({
       alert(xhr.statusText)
     }
   })
-var table = [];
+
+
 $.getJSON('https://data.sccgov.org/resource/j2gj-bg6c.json',function(result){
  for(key in result) {
    if (result.hasOwnProperty(key)) {
@@ -75,12 +90,15 @@ $.getJSON('https://data.sccgov.org/resource/j2gj-bg6c.json',function(result){
       }
     }
     /*
-        for pointing to the data
+      //for pointing to the data
     for (x in table){
     document.write('\n'+table[x]['key']['zipcode']);}*/
-    });
+  });
 
-$.when(zip).done(function(){
+
+
+$.when(zip).done(function () {
+  var expression = ['match', ['get', 'STATE_ID']]; // for color input
   var map = L.map('map', {
     center: [37.35105530964274, -121.95716857910155], // EDIT latitude, longitude to re-center map
     zoom: 12,  // EDIT from 1 to 18 -- decrease to zoom out, increase to zoom in
@@ -106,17 +124,35 @@ $.when(zip).done(function(){
 
   //controller for layers
   var controlLayers = L.control.layers(based).addTo(map);
+  var cases;
   var zipshape = L.geoJSON(zip.responseJSON,
-  {onEachFeature: function (feature, layer) {
-  layer.bindPopup('<h3>'+feature.properties.ZCTA+'</h3><p>Population: '+feature.properties.POPCOUNT+'</p>')
-  layer.addEventListener('mouseover', highlightfeature);
-  layer.addEventListener('mouseout',function (d){zipshape.resetStyle(d.target);})
-  layer.addEventListener('click',function (d){map.panTo(d.target.getBounds().getCenter());})
+  {
+    //style: style(cases),
+    onEachFeature: function (feature, layer) {
+    table.forEach(function(row) {
+      if (feature.properties.ZCTA == row['key']['zipcode'])
+        cases = row['key']['cases'];
+    });
+  layer.bindPopup('<h3>'+feature.properties.ZCTA+'</h3><p>Population: '+feature.properties.POPCOUNT+'</p>'+'<p>Cases: '+cases+'</p>');
+  //set hover color
+  var color = getcolor(cases);
+  layer.setStyle(style(cases));
+  //layer.addEventListener('mouseover', highlightfeature);
+  //reset the style hover feature
+  //layer.addEventListener('mouseout', function(){layer.setStyle(style(cases))});
+  //center to the clicked feature
+  layer.addEventListener('click',function (d){
+    map.panTo(d.target.getBounds().getCenter());})
+  layer.addEventListener('onchange ')
   }}).addTo(map);
-  /*
-  zipshape.eachLayer(function (lyr) {
-    featureJoinByProperty(lyr.feature.properties,table, 'ZCATA','zipcode')
-  }*/
+
+
+  //join the zipshape table with covid json as a table by zipcode
+  /*zipshape.eachLayer(function (lyr) {
+
+    //featureJoinByProperty(lyr.feature.properties,table, 'ZCATA','zipcode')
+
+  });*/
 
 });
 

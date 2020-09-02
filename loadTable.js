@@ -1,7 +1,9 @@
 //live santa clara dataType
+
+
 d3.json("https://data.sccgov.org/resource/j2gj-bg6c.json", function(data) {
+    let html;
     var sortAscending = true;
-    var keep_click = false;
     var table = d3.select('#covidtable').append('table');
     var titles = d3.keys(data[0]);
 	  var headers = table.append('thead').append('tr')
@@ -41,5 +43,10 @@ d3.json("https://data.sccgov.org/resource/j2gj-bg6c.json", function(data) {
 		    })
 		    .text(function (d) {
 		    	return d.value;
-		    });
+		    })
+        //trigger alert if click onto the zipcode value
+        .on('click',function(d){
+          if(d.name == 'zipcode')
+            callmap(d.value);});
+
 	  });
