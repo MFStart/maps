@@ -21,7 +21,7 @@ function style(c) {
     fillColor: getcolor(c),
     weight: 2
   };
-  }
+}
 
 let hoverstyle = {
   color: 'yellow',
@@ -32,26 +32,20 @@ function highlightfeature(d) {
   d.target.bringtoFront();
 }
 
-function callmap(d){
-  //var tzip = d.value;
-  alert(d);
+function callmap(d) {
+    zip.eachLayer(()=> {
+    //if (layer.feature.properties.ZCTA == d) {
+    //map.eachLayer(function (layer){
+    alert(zip)
+
+
+    })
+    //  map.panTo(lyr.target.getBounds().getCenter());
+
+  //});
 }
-/*
-function featureJoinByProperty(fProps, dTable, joinKey,tablekey) {
-  var keyVal = fProps[joinKey];
-  var match = {};
-  for (var i = 0; i < dTable.length; i++) {
-    if (dTable[i][tablekey] === keyVal) {
-      match = dTable[i];
-      for (key in match) {
-        if (!(key in fProps)) {
-          fProps[key] = match[key];
-        }
-      }
-    }
-  }
-}
-*/
+
+
 
 
 //stored stuff in json
@@ -59,6 +53,7 @@ var table = [];
 /*
 //gets all the individual zipcode
 zipcode.eachFeature(function (lyr) {
+
   return (layer.feature.properties.ZIPCODE);
 });
 */
@@ -82,7 +77,7 @@ var zip = $.ajax({
     }
   })
 
-
+//gets table
 $.getJSON('https://data.sccgov.org/resource/j2gj-bg6c.json',function(result){
  for(key in result) {
    if (result.hasOwnProperty(key)) {
@@ -97,8 +92,8 @@ $.getJSON('https://data.sccgov.org/resource/j2gj-bg6c.json',function(result){
 
 
 
-$.when(zip).done(function () {
-  var expression = ['match', ['get', 'STATE_ID']]; // for color input
+$.when(zip).done( ()=> {
+  // var expression = ['match', ['get', 'STATE_ID']]; // for color input
   var map = L.map('map', {
     center: [37.35105530964274, -121.95716857910155], // EDIT latitude, longitude to re-center map
     zoom: 12,  // EDIT from 1 to 18 -- decrease to zoom out, increase to zoom in
@@ -129,21 +124,21 @@ $.when(zip).done(function () {
   {
     //style: style(cases),
     onEachFeature: function (feature, layer) {
+    //cases variable into a temp variable for display
     table.forEach(function(row) {
       if (feature.properties.ZCTA == row['key']['zipcode'])
         cases = row['key']['cases'];
     });
-  layer.bindPopup('<h3>'+feature.properties.ZCTA+'</h3><p>Population: '+feature.properties.POPCOUNT+'</p>'+'<p>Cases: '+cases+'</p>');
-  //set hover color
-  var color = getcolor(cases);
-  layer.setStyle(style(cases));
+    layer.bindPopup('<h3>'+feature.properties.ZCTA+'</h3><p>Population: '+feature.properties.POPCOUNT+'</p>'+'<p>Cases: '+cases+'</p>');
+    //set hover color
+    var color = getcolor(cases);
+    layer.setStyle(style(cases));
   //layer.addEventListener('mouseover', highlightfeature);
   //reset the style hover feature
   //layer.addEventListener('mouseout', function(){layer.setStyle(style(cases))});
   //center to the clicked feature
   layer.addEventListener('click',function (d){
     map.panTo(d.target.getBounds().getCenter());})
-  layer.addEventListener('onchange ')
   }}).addTo(map);
 
 
