@@ -7,14 +7,7 @@
     (x > 10 && x < 50) ? '#ffffb2':
                     '#ffffcc';
 }
-/* click on table zoom to map
-function zoomto(zip) {
-  var zipcode = zip;
-  var map = document.querySelector('#map')._leaflet_map;
-  alert(map.zipshape);
-  //map.panTo(d.target.getBounds().getCenter());
-}
-*/
+
 
 function style(c) {
   return {
@@ -32,24 +25,29 @@ function highlightfeature(d) {
   d.target.bringtoFront();
 }
 
+
+
+
 function callmap(d) {
-    zip.eachLayer(()=> {
-    //if (layer.feature.properties.ZCTA == d) {
-    //map.eachLayer(function (layer){
-    alert(zip)
-
-
-    })
+  var filter = /\(([^)]+)\)/;
+  var t_coords = table2.get(d); //gets the dictioanry value based on ZIPCODE
+  var zoomto = filter.exec(t_coords)[1]; //fitler out the latLng substrings
+  var lat = zoomto.split(',')[0]; //split into lat by comma
+  var lon = zoomto.split(',')[1]; //split into lon by comma
+  map.panTo(L.latLng(lat, lon));
+}
     //  map.panTo(lyr.target.getBounds().getCenter());
 
   //});
-}
+
 
 
 
 
 //stored stuff in json
 var table = [];
+var table2 = new Map(); //for storing the covid zipcode and center coordinates
+var map = null; //gloabl variable to be able to interact by panTo
 /*
 //gets all the individual zipcode
 zipcode.eachFeature(function (lyr) {
@@ -80,21 +78,24 @@ var zip = $.ajax({
 //gets table
 $.getJSON('https://data.sccgov.org/resource/j2gj-bg6c.json',function(result){
  for(key in result) {
-   if (result.hasOwnProperty(key)) {
+  if (result.hasOwnProperty(key)) {
       table.push({key:result[key], value:result[key]["zipcode"]});
       }
-    }
+  }
+  //for (key2 in result){
+  //    if (result.hasOwnProperty(key)){table2.put(key, result[key]["zipcode"]);}
+  //}
     /*
       //for pointing to the data
     for (x in table){
     document.write('\n'+table[x]['key']['zipcode']);}*/
-  });
+});
 
 
 
 $.when(zip).done( ()=> {
   // var expression = ['match', ['get', 'STATE_ID']]; // for color input
-  var map = L.map('map', {
+  map = L.map('map', {
     center: [37.35105530964274, -121.95716857910155], // EDIT latitude, longitude to re-center map
     zoom: 12,  // EDIT from 1 to 18 -- decrease to zoom out, increase to zoom in
     scrollWheelZoom: true });
@@ -120,6 +121,9 @@ $.when(zip).done( ()=> {
   //controller for layers
   var controlLayers = L.control.layers(based).addTo(map);
   var cases;
+  var cases2;
+  var coords;
+
   var zipshape = L.geoJSON(zip.responseJSON,
   {
     //style: style(cases),
@@ -128,11 +132,22 @@ $.when(zip).done( ()=> {
     table.forEach(function(row) {
       if (feature.properties.ZCTA == row['key']['zipcode'])
         cases = row['key']['cases'];
-    });
-    layer.bindPopup('<h3>'+feature.properties.ZCTA+'</h3><p>Population: '+feature.properties.POPCOUNT+'</p>'+'<p>Cases: '+cases+'</p>');
+        coords = layer.getBounds().getCenter().toString();
+        table2.set(feature.properties.ZCTA,coords);
+        //dis = getPropertyrow['key']
+      });
+
+    //table2.forEach((feature,layer) => {
+    //  if (feature.properties.ZCTA == row['key']['zipcode'])
+    //    cases2 =layer.get('key');
+    //})
+    var dis = table2.get(feature.properties.ZCTA);
+    layer.bindPopup('<h3>'+feature.properties.ZCTA+'</h3><p>Population: '+feature.properties.POPCOUNT+'</p>'+'<p>Cases: '+cases+'</p>'+'<p>coords: '+coords+'</p>' + '<p>'+dis+'</p>');
     //set hover color
     var color = getcolor(cases);
     layer.setStyle(style(cases));
+
+
   //layer.addEventListener('mouseover', highlightfeature);
   //reset the style hover feature
   //layer.addEventListener('mouseout', function(){layer.setStyle(style(cases))});
@@ -140,6 +155,7 @@ $.when(zip).done( ()=> {
   layer.addEventListener('click',function (d){
     map.panTo(d.target.getBounds().getCenter());})
   }}).addTo(map);
+
 
 
   //join the zipshape table with covid json as a table by zipcode
@@ -183,7 +199,8 @@ zipcode.on('mouseover', function (e) {
         console.log(error);
         return;
       }
-      console.log(featureCollection.features[0].properties.zipcode);
+      console.log(featureCollection.featur
+      es[0].properties.zipcode);
     })
 
 
