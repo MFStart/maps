@@ -1,18 +1,23 @@
+
  function getcolor(x) {
-    return x > 1000 ? '#b10026':
-    (x > 800 && x < 1000) ? '#e31a1c':
-    (x > 500 && x < 800) ?'#fc4e2a':
-    (x > 300 && x < 500) ? '#fd8d3c':
-    (x > 50 && x < 300) ? '#fed976':
-    (x > 10 && x < 50) ? '#ffffb2':
-                    '#ffffcc';
+   //returns symbology by color breaks
+   var breaks = [-Infinity , 10,50,300,500,800,1000, Infinity];
+   var color = ['#ffffcc','#ffffb2','#fed976','#fd8d3c','#fc4e2a','#e31a1c','#b10026'];
+   for (var y = 0; y< breaks.length; y++){
+     if(x > breaks[y] && x<= breaks[y+1]){
+      return color[y];
+     }
+   }
 }
+
 
 
 function style(c) {
   return {
     fillColor: getcolor(c),
-    weight: 2
+    weight: .5,
+    opacity: 1,
+    fillOpacity: .6
   };
 }
 
@@ -93,7 +98,7 @@ $.getJSON('https://data.sccgov.org/resource/j2gj-bg6c.json',function(result){
 
 
 
-$.when(zip).done( ()=> {
+$.when(zip).done(()=> {
   // var expression = ['match', ['get', 'STATE_ID']]; // for color input
   map = L.map('map', {
     center: [37.35105530964274, -121.95716857910155], // EDIT latitude, longitude to re-center map
@@ -112,24 +117,37 @@ $.when(zip).done( ()=> {
     //  controlLayers.addBaseLayer(terrain, 'Stamen Terrain basemap');
 
     //define based map
-  var based= {
+  let based= {
     "Light": light,
     "Terrain": terrain
     //define feature layers
     };
-
+  let legend =L.control({position: "bottomright"});
   //controller for layers
   var controlLayers = L.control.layers(based).addTo(map);
   var cases;
-  var cases2;
-  var coords;
+  legend.onAdd = function(){
+      let div = L.DomUtil.create("div", "legend");
+      div.innerHTML =
+       '<b>Covid Cases by Zipcode</b><br>' +
+       '<small>Cases</small><br>' +
+       '<i style="background-color: #b10026"></i>1000+<br>' +
+       '<i style="background-color: #e31a1c"></i>800 - 1000<br>' +
+       '<i style="background-color: #fc4e2a"></i>500 - 800<br>' +
+       '<i style="background-color: #fd8d3c"></i>300 - 500<br>' +
+       '<i style="background-color: #fed976"></i>50 - 300<br>' +
+       '<i style="background-color: #ffffb2"></i>10 - 50<br>' +
+       '<i style="background-color: #ffffcc"></i>0 - 10<br>';
+   return div;
+  };
 
+  legend.addTo(map);
   var zipshape = L.geoJSON(zip.responseJSON,
   {
     //style: style(cases),
-    onEachFeature: function (feature, layer) {
+    onEachFeature: (feature, layer)=> {
     //cases variable into a temp variable for display
-    table.forEach(function(row) {
+    table.forEach((row)=> {
       if (feature.properties.ZCTA == row['key']['zipcode'])
         cases = row['key']['cases'];
         coords = layer.getBounds().getCenter().toString();
@@ -142,7 +160,7 @@ $.when(zip).done( ()=> {
     //    cases2 =layer.get('key');
     //})
     var dis = table2.get(feature.properties.ZCTA);
-    layer.bindPopup('<h3>'+feature.properties.ZCTA+'</h3><p>Population: '+feature.properties.POPCOUNT+'</p>'+'<p>Cases: '+cases+'</p>'+'<p>coords: '+coords+'</p>' + '<p>'+dis+'</p>');
+    layer.bindPopup('<h3>'+feature.properties.ZCTA+'</h3><p>Population: '+feature.properties.POPCOUNT+'</p>'+'<p>Cases: '+cases+'</p>');
     //set hover color
     var color = getcolor(cases);
     layer.setStyle(style(cases));
@@ -152,7 +170,7 @@ $.when(zip).done( ()=> {
   //reset the style hover feature
   //layer.addEventListener('mouseout', function(){layer.setStyle(style(cases))});
   //center to the clicked feature
-  layer.addEventListener('click',function (d){
+  layer.addEventListener('click',(d)=>{
     map.panTo(d.target.getBounds().getCenter());})
   }}).addTo(map);
 

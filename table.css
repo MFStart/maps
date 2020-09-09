@@ -55,7 +55,22 @@ th.des:after {
   th.aes:after {
     content: "\21E7";
   }
-
+.legend {
+      padding: 2px 2px;
+      background-color: rgba(255,255,255,0.8);
+      box-shadow: 0 0 5px rgba(0,0,0,0.2);
+      border-radius: 2px;
+  }
+.legend i {
+      width: 18px;
+      height: 18px;
+      float: left;
+      margin-right: 8px;
+      opacity: 0.8;
+  }
+  div.legend.leaflet-control br {
+      clear: both;
+  }
 /*
 Max width before this PARTICULAR table gets nasty
 This query will take effect for any screen smaller than 760px
