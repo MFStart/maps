@@ -13,8 +13,7 @@ d3.json("https://data.sccgov.org/resource/j2gj-bg6c.json", function(data) {
     .text(function (d) {return d;})
     .on('click', function (d) {headers.attr('class', 'header');
     if (sortAscending) {
-        rows.sort(function (a, b) {
-        return d3.ascending(b[d], a[d]);
+        rows.sort(function (a, b) {return d3.ascending(b[d], a[d]);
         });
         sortAscending = false;
         this.className = 'aes';
@@ -44,7 +43,7 @@ d3.json("https://data.sccgov.org/resource/j2gj-bg6c.json", function(data) {
 		    .text(function (d) {
 		    	return d.value;
 		    })
-        //trigger alert if click onto the zipcode value
+        //trigger callmap to zoom to geoJson feature if click onto the zipcode value
         .on('click',function(d){
           if(d.name == 'zipcode')
             callmap(d.value);});

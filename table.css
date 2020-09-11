@@ -6,16 +6,16 @@
    font: 14px/1.4 Georgia, Serif;
    }
   #covidtable {
-  margin: 10px;
+  margin: 12px;
   }
   p {
  margin: 10px 0;
   }
   #info-pane {
-    position: absolute;
+    position: relative;
     top: 10px;
-    right: 10px;
-    z-index: 10;
+    right: 5px;
+    z-index: 1;
     padding: 1em;
     background: white;
   }
@@ -23,7 +23,7 @@
 Generic Styling, for Desktops/Laptops
 */
 table {
-  width: 100%;
+  poistion: abosolute;
   border-collapse: collapse;
 }
 tr:hover td{
@@ -33,17 +33,15 @@ tr:hover td{
 tr.selected td {
  background-color: #ffd659;
 }
-
+/*header setting*/
 th {
-  background: #e0e0e0;
-  color: black;
   font-weight: bold;
-  cursor: s-resize;
-  background-repeat: no-repeat;
-      background-position: 3% center;
+  color: black;
+  cursor: pointer;
+  background: #e0e0e0;
 }
 td, th {
-  padding: 6px;
+  padding: 0 1em .5ex 0;
   border: 1px solid #ccc;
   text-align: left;
 }
@@ -52,7 +50,7 @@ th.des:after {
     content: "\21E9";
   }
 
-  th.aes:after {
+th.aes:after {
     content: "\21E7";
   }
 .legend {

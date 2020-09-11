@@ -126,6 +126,7 @@ $.when(zip).done(()=> {
   //controller for layers
   var controlLayers = L.control.layers(based).addTo(map);
   var cases;
+  //creates dom object legend to be defined by css
   legend.onAdd = function(){
       let div = L.DomUtil.create("div", "legend");
       div.innerHTML =
@@ -146,21 +147,17 @@ $.when(zip).done(()=> {
   {
     //style: style(cases),
     onEachFeature: (feature, layer)=> {
-    //cases variable into a temp variable for display
+    //loaded the json table into separate dictioanry -> temp variables
+    // for data where the the ZCTA(geoJson) = zipcode (json table) display
     table.forEach((row)=> {
       if (feature.properties.ZCTA == row['key']['zipcode'])
         cases = row['key']['cases'];
-        coords = layer.getBounds().getCenter().toString();
-        table2.set(feature.properties.ZCTA,coords);
-        //dis = getPropertyrow['key']
-      });
+        coords = layer.getBounds().getCenter().toString(); // center for each geoJson feature
+        table2.set(feature.properties.ZCTA,coords);//another dictionary for storing key: zipcode value: coordinates
+        });
 
-    //table2.forEach((feature,layer) => {
-    //  if (feature.properties.ZCTA == row['key']['zipcode'])
-    //    cases2 =layer.get('key');
-    //})
-    var dis = table2.get(feature.properties.ZCTA);
-    layer.bindPopup('<h3>'+feature.properties.ZCTA+'</h3><p>Population: '+feature.properties.POPCOUNT+'</p>'+'<p>Cases: '+cases+'</p>');
+    //var dis = table2.get(feature.properties.ZCTA); // this is to get the coordinates value by ZCTA as key
+    layer.bindPopup('<h3>'+feature.properties.ZCTA+'</h3>'+'<p>'+'Population: '+feature.properties.POPCOUNT+'<br>'+'Cases: '+cases+'</p>');
     //set hover color
     var color = getcolor(cases);
     layer.setStyle(style(cases));
@@ -170,7 +167,7 @@ $.when(zip).done(()=> {
   //reset the style hover feature
   //layer.addEventListener('mouseout', function(){layer.setStyle(style(cases))});
   //center to the clicked feature
-  layer.addEventListener('click',(d)=>{
+    layer.addEventListener('click',(d)=>{
     map.panTo(d.target.getBounds().getCenter());})
   }}).addTo(map);
 
