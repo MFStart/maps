@@ -4,11 +4,12 @@
    var breaks = [-Infinity , 10,50,300,500,800,1000, Infinity];
    var color = ['#ffffcc','#ffffb2','#fed976','#fd8d3c','#fc4e2a','#e31a1c','#b10026'];
    for (var y = 0; y< breaks.length; y++){
-     if(x > breaks[y] && x<= breaks[y+1]){
+     if(x > breaks[y] && x<= breaks[y+1])
       return color[y];
      }
+    return '#606160';
+
    }
-}
 
 
 
@@ -125,7 +126,7 @@ $.when(zip).done(()=> {
   let legend =L.control({position: "bottomright"});
   //controller for layers
   var controlLayers = L.control.layers(based).addTo(map);
-  var cases;
+
   //creates dom object legend to be defined by css
   legend.onAdd = function(){
       let div = L.DomUtil.create("div", "legend");
@@ -147,19 +148,22 @@ $.when(zip).done(()=> {
   {
     //style: style(cases),
     onEachFeature: (feature, layer)=> {
+        var cases; //place holder for cases from covid table
+        var pop; //place holder for population from covid table
     //loaded the json table into separate dictioanry -> temp variables
     // for data where the the ZCTA(geoJson) = zipcode (json table) display
     table.forEach((row)=> {
-      if (feature.properties.ZCTA == row['key']['zipcode'])
+      if (feature.properties.ZCTA == row['key']['zipcode']){
         cases = row['key']['cases'];
-        coords = layer.getBounds().getCenter().toString(); // center for each geoJson feature
-        table2.set(feature.properties.ZCTA,coords);//another dictionary for storing key: zipcode value: coordinates
-        });
+        pop = row['key']['population']
+        }
+      coords = layer.getBounds().getCenter().toString(); // center for each geoJson feature
+      table2.set(feature.properties.ZCTA,coords);//another dictionary for storing key: zipcode value: coordinates
+      });
 
     //var dis = table2.get(feature.properties.ZCTA); // this is to get the coordinates value by ZCTA as key
-    layer.bindPopup('<h3>'+feature.properties.ZCTA+'</h3>'+'<p>'+'Population: '+feature.properties.POPCOUNT+'<br>'+'Cases: '+cases+'</p>');
+    layer.bindPopup('<h3>'+feature.properties.ZCTA+'</h3>'+'<p>'+'Population: '+pop+'<br>'+'Cases: '+cases+'</p>');
     //set hover color
-    var color = getcolor(cases);
     layer.setStyle(style(cases));
 
 

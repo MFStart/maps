@@ -21,28 +21,24 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-omnivore/0.3.4/leaflet-omnivore.min.js"></script>
   <!-- Position the map and title with Cascading Style Sheet (.css) -->
   <link rel="stylesheet" href="table.css" type="text/css">
-</head>
-<style>
-
-</style>
-<body>
-  <header><h1>SCC Covid Map</h1>
-  </header>
-  <div id="map" style="width: 80%; height: 600px"></div>
-  <table id="covidtable" width:'20%' border:'0'></div>
   <script type= "text/javascript" src = "map.js"></script>
   <script>
   //hooks a dom object
   // http://leafletjs.com/reference-1.1.0.html#class-constructor-hooks
-  L.Map.addInitHook(function () {
-    // Store a reference of the Leaflet map object on the map container,
-    // so that it could be retrieved from DOM selection.
-    // https://leafletjs.com/reference-1.3.4.html#map-getcontainer
-    this.getContainer()._leaflet_map = this;
-  });
   </script>
   <script type="text/javascript" src="https://d3js.org/d3.v3.min.js"></script>
   <script type= "text/javascript" src = "loadTable.js"></script>
+  <script type= "text/javascript" src = "loadtable2.js"></script>
+</head>
+<style>
+
+</style>
+  <header><h1>SCC Covid Map</h1>
+  </header>
+  <body>
+  <div id="map" style="width: 80%; height: 600px"></div>
+  <!--table id="covidtable"></table-->
+  <table id="covidtable2"></table>
 
 
 </body>

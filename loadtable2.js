@@ -1,56 +1,49 @@
-/**
- * Created by shiyan on 9/13/15.
- */
-
-
- .on('click',function(d){
-   if(keep_click){
-     keep_click = !keep_click;
-     d3.select(this).style('background','transparent');}
-   else if(d3.select(this).style('background') == 'lightblue'){
-     d3.select(this).style('background','transparent');}
-   else
-     d3.select(this).style('background','lightblue');
-   });
-/*
- Code by Shawn Allen (@shawnbot) repro'd in d3noob's book,
- http://www.d3noob.org/2013/02/add-html-table-to-your-d3js-graph.html,
- but with minor modification by Lynn.
- */
-
-function tabulate(data, columns, id) {
-    var table = d3.select(id).append("table"),
-        thead = table.append("thead"),
-        tbody = table.append("tbody");
-
-    // append the header row
-    thead.append("tr")
-        .selectAll("th")
-        .data(columns)
-        .enter()
-        .append("th")
-        .text(function(column) { return column; });
-
-    // create a row for each object in the data
-    var rows = tbody.selectAll("tr")
-        .data(data)
-        .enter()
-        .append("tr");
-
-    // create a cell in each row for each column
-    // At this point, the rows have data associated.
-    // So the data function accesses it.
-    var cells = rows.selectAll("td")
-        .data(function(row) {
-            // he does it this way to guarantee you only use the
-            // values for the columns you provide.
-            return columns.map(function(column) {
-                // return a new object with a value set to the row's column value.
-                return {value: row[column]};
+$(document).ready(function(){
+  //uses Jquery to find the first column of table: zipcode to pass zipcode value to callmap
+	$('#covidtable2').on('click','td,th',function(){
+        //if(this.textcontent === 'zipcode')
+        var c = $(this).closest('tr');
+        var d = c.find('td:eq(0)').text();
+        callmap(d);
+    });
+	$.getJSON("https://data.sccgov.org/resource/j2gj-bg6c.json", function (data) {
+    	var arrItems = [];      // THE ARRAY TO STORE JSON ITEMS.
+            $.each(data, function (index, value) {
+                arrItems.push(value);       // PUSH THE VALUES INSIDE THE ARRAY.
             });
-        })
-        .enter()
-        .append("td")
-        .text(function(d) { return d.value; });
-    return table;
-}
+            // EXTRACT VALUE FOR TABLE HEADER.
+            var col = [];
+            for (var i = 0; i < arrItems.length; i++) {
+                for (var key in arrItems[i]) {
+                    if (col.indexOf(key) === -1) {
+                        col.push(key);
+                    }
+                }
+            }
+
+            // CREATE DYNAMIC TABLE.
+            var table = document.createElement("table");
+
+            // CREATE HTML TABLE HEADER ROW USING THE EXTRACTED HEADERS ABOVE.
+
+            var tr = table.insertRow(-1);                   // TABLE ROW.
+
+            for (var i = 0; i < col.length; i++) {
+                var th = document.createElement("th");      // TABLE HEADER.
+                th.innerHTML = col[i];
+                tr.appendChild(th);
+            }
+
+            // ADD JSON DATA TO THE TABLE AS ROWS.
+            for (var i = 0; i < arrItems.length; i++) {
+
+                tr = table.insertRow(-1);
+
+                for (var j = 0; j < col.length; j++) {
+                    var tabCell = tr.insertCell(-1);
+                    tabCell.innerHTML = arrItems[i][col[j]];
+                }
+            }
+            $("#covidtable2").append(table);
+   });
+  });
