@@ -11,25 +11,16 @@
 
    }
 
-
-
 function style(c) {
   return {
     fillColor: getcolor(c),
-    weight: .5,
+    color: '#ffffff',
+    weight: 2,
     opacity: 1,
-    fillOpacity: .6
+    fillOpacity: .45
   };
 }
 
-let hoverstyle = {
-  color: 'yellow',
-  weight: 3
-  };
-function highlightfeature(d) {
-  d.target.setStyle(hoverstyle);
-  d.target.bringtoFront();
-}
 
 
 
@@ -52,7 +43,9 @@ function callmap(d) {
 
 //stored stuff in json
 var table = [];
+var city_table=[];
 var table2 = new Map(); //for storing the covid zipcode and center coordinates
+var city_coords = new Map(); //for storing the covid city and center coordinates
 var map = null; //gloabl variable to be able to interact by panTo
 /*
 //gets all the individual zipcode
@@ -79,9 +72,20 @@ var zip = $.ajax({
       error: function(xhr) {
       alert(xhr.statusText)
     }
-  })
+  });
 
-//gets table
+//city shapefile
+var city = $.ajax({
+  url:"https://opendata.arcgis.com/datasets/b1fa77f6e79f4ccbbc34e737e1bc113d_2.geojson",
+  dataType: "json",
+  success: console.log("data successfully loaded."),
+      error: function(xhr) {
+      alert(xhr.statusText)
+    }
+  });
+
+
+//gets covid table
 $.getJSON('https://data.sccgov.org/resource/j2gj-bg6c.json',function(result){
  for(key in result) {
   if (result.hasOwnProperty(key)) {
@@ -97,131 +101,148 @@ $.getJSON('https://data.sccgov.org/resource/j2gj-bg6c.json',function(result){
     document.write('\n'+table[x]['key']['zipcode']);}*/
 });
 
+//gets covid by city
+$.getJSON('https://data.sccgov.org/resource/59wk-iusg.json',function(result){
+ for(key in result) {
+  if (result.hasOwnProperty(key)) {
+      city_table.push({key:result[key], value:result[key]["city"]});
+      }
+  }
+});
 
 
-$.when(zip).done(()=> {
+$.when(zip,city).done(()=> {
   // var expression = ['match', ['get', 'STATE_ID']]; // for color input
   map = L.map('map', {
     center: [37.35105530964274, -121.95716857910155], // EDIT latitude, longitude to re-center map
     zoom: 12,  // EDIT from 1 to 18 -- decrease to zoom out, increase to zoom in
     scrollWheelZoom: true });
 
-    /* Carto light-gray basemap tiles with labels */
-  var light = L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png', {
-     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, &copy; <a href="https://carto.com/attribution">CARTO</a>'
-    }).addTo(map); // EDIT - insert or remove ".addTo(map)" before last semicolon to display by default
-    //  controlLayers.addBaseLayer(light, 'Carto Light basemap');
-    /* Stamen colored terrain basemap tiles with labels */
-  var terrain = L.tileLayer('https://stamen-tiles.a.ssl.fastly.net/terrain/{z}/{x}/{y}.png', {
-     attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.'
-    }); // EDIT - insert or remove ".addTo(map)" before last semicolon to display by default
-    //  controlLayers.addBaseLayer(terrain, 'Stamen Terrain basemap');
 
-    //define based map
-  let based= {
-    "Light": light,
-    "Terrain": terrain
-    //define feature layers
-    };
-  let legend =L.control({position: "bottomright"});
-  //controller for layers
-  var controlLayers = L.control.layers(based).addTo(map);
+  var cityshape= new L.geoJSON(city.responseJSON,{
+        onEachFeature: (feature, layer)=> {
+          city_table.forEach((row)=> {
+            if (feature.properties.NAME == row['key']['city']){
+              cases = row['key']['cases'];
+              pop = row['key']['population']
+              }
+              var coords = layer.getBounds().getCenter().toString(); // center for each geoJson feature
+              city_coords.set(feature.properties.ZCTA,coords);//another dictionary for storing key: zipcode value: coordinates
+          });
+          layer.bindPopup('<h3>'+feature.properties.NAME+'</h3>');
+          layer.addEventListener(('click'),(d) => {
+            map.panTo(d.target.getBounds().getCenter());
+          });
+          /*layer.addEventListener('click',(d)=>{
+           setTimeout(()=>{
+            layer.setStyle({
+              color: "#fdff00",
+              weight: 5,
+              fillOpacity: .5
+            },200);});
+            map.panTo(d.target.getBounds().getCenter());
+          });
+          layer.on('popupclose',()=>{
+            layer.resetstyle();
+          });*/
+        }
+      });
 
-  //creates dom object legend to be defined by css
-  legend.onAdd = function(){
-      let div = L.DomUtil.create("div", "legend");
-      div.innerHTML =
-       '<b>Covid Cases by Zipcode</b><br>' +
-       '<small>Cases</small><br>' +
-       '<i style="background-color: #b10026"></i>1000+<br>' +
-       '<i style="background-color: #e31a1c"></i>800 - 1000<br>' +
-       '<i style="background-color: #fc4e2a"></i>500 - 800<br>' +
-       '<i style="background-color: #fd8d3c"></i>300 - 500<br>' +
-       '<i style="background-color: #fed976"></i>50 - 300<br>' +
-       '<i style="background-color: #ffffb2"></i>10 - 50<br>' +
-       '<i style="background-color: #ffffcc"></i>0 - 10<br>';
-   return div;
-  };
-
-  legend.addTo(map);
-  var zipshape = L.geoJSON(zip.responseJSON,
-  {
+  //zipcode layer + covid table data
+  var zipshape = new L.geoJSON(zip.responseJSON,{
     //style: style(cases),
     onEachFeature: (feature, layer)=> {
-        var cases; //place holder for cases from covid table
-        var pop; //place holder for population from covid table
+    var cases; //place holder for cases from covid table
+    var pop; //place holder for population from covid table
     //loaded the json table into separate dictioanry -> temp variables
     // for data where the the ZCTA(geoJson) = zipcode (json table) display
-    table.forEach((row)=> {
-      if (feature.properties.ZCTA == row['key']['zipcode']){
-        cases = row['key']['cases'];
-        pop = row['key']['population']
-        }
-      coords = layer.getBounds().getCenter().toString(); // center for each geoJson feature
-      table2.set(feature.properties.ZCTA,coords);//another dictionary for storing key: zipcode value: coordinates
+      table.forEach((row)=> {
+        if (feature.properties.ZCTA == row['key']['zipcode']){
+          cases = row['key']['cases'];
+          pop = row['key']['population']
+          }
+          var coords = layer.getBounds().getCenter().toString(); // center for each geoJson feature
+          table2.set(feature.properties.ZCTA,coords);//another dictionary for storing key: zipcode value: coordinates
       });
 
     //var dis = table2.get(feature.properties.ZCTA); // this is to get the coordinates value by ZCTA as key
-    layer.bindPopup('<h3>'+feature.properties.ZCTA+'</h3>'+'<p>'+'Population: '+pop+'<br>'+'Cases: '+cases+'</p>');
+      layer.bindPopup('<h3>'+feature.properties.ZCTA+'</h3>'+'<p>'+'Population: '+pop+'<br>'+'Cases: '+cases+'</p>');
     //set hover color
-    layer.setStyle(style(cases));
+      layer.setStyle(style(cases));
+    //layer.addEventListener('mouseover', highlightfeature);
+    //reset the style hover feature
+    //layer.addEventListener('mouseout', function(){layer.setStyle(style(cases))});
 
+    //center to the clicked feature
+      layer.addEventListener('click',(d)=>{
+       setTimeout(()=>{
+        layer.setStyle({
+          color: "#fdff00",
+          weight: 5,
+          fillOpacity: .5
+        },200);});
+        map.panTo(d.target.getBounds().getCenter());
+      });
+      layer.on('popupclose',()=>{
+        layer.setStyle(style(cases));
+      });
+    /*,
+    onclicked:(feature,layer)=>{
+    setTimeout(()=>{
+      zipshape.setStyle({
+        color: "#41E500",
+        weight: 10
+        },200);
+      });*/
+    }
+  });
 
-  //layer.addEventListener('mouseover', highlightfeature);
-  //reset the style hover feature
-  //layer.addEventListener('mouseout', function(){layer.setStyle(style(cases))});
-  //center to the clicked feature
-    layer.addEventListener('click',(d)=>{
-    map.panTo(d.target.getBounds().getCenter());})
-  }}).addTo(map);
-
-
-
-  //join the zipshape table with covid json as a table by zipcode
-  /*zipshape.eachLayer(function (lyr) {
-
-    //featureJoinByProperty(lyr.feature.properties,table, 'ZCATA','zipcode')
-
-  });*/
+  /* Carto light-gray basemap tiles with labels */
+  var light = L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png', {
+  attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, &copy; <a href="https://carto.com/attribution">CARTO</a>'
+  }).addTo(map);
+  var terrain = L.tileLayer('https://stamen-tiles.a.ssl.fastly.net/terrain/{z}/{x}/{y}.png', {
+  attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.'
+  });
+  let based= {
+      "Light": light,
+      "Terrain": terrain
+      //define feature layers
+  };
+  let layers={
+    "By Zipcode": zipshape.addTo(map),
+    "By City": cityshape
+  };
+  //controller for layers
+  //define based map
+  var controlLayers = L.control.layers(based,layers, {position:'topleft', collapsed:false}).addTo(map);
+  //creates dom object legend to be defined by css
+  let ziplegend =L.control({position: "bottomright"});
+    ziplegend.onAdd = function(){
+        let div = L.DomUtil.create("div", "legend");
+        div.innerHTML =
+         '<b>Covid Cases by Zipcode</b><br>' +
+         '<small>Cases</small><br>' +
+         '<i style="background-color: #b10026"></i>1000+<br>' +
+         '<i style="background-color: #e31a1c"></i>800 - 1000<br>' +
+         '<i style="background-color: #fc4e2a"></i>500 - 800<br>' +
+         '<i style="background-color: #fd8d3c"></i>300 - 500<br>' +
+         '<i style="background-color: #fed976"></i>50 - 300<br>' +
+         '<i style="background-color: #ffffb2"></i>10 - 50<br>' +
+         '<i style="background-color: #ffffec"></i>0 - 10<br>';
+     return div;
+   }
+   ziplegend.addTo(map);
+   map.on('overlayadd',function(lyr){
+     if(lyr.name === 'By Zipcode'){
+       //remove other legend if applicable
+       ziplegend.addTo(this);
+     }
+   });
+   map.on('overlayremove',function(lyr){
+     if(lyr.name === 'By Zipcode'){
+       //remove other legend if applicable
+       ziplegend.remove(this);}
+   });
 
 });
-
-
-
-
-
-
-/*
-/* display basemap tiles -- see others at https://leaflet-extras.github.io/leaflet-providers/preview/ */
-//var popupTemplate = '<h1>{zipcode}</h3> <br>Cases: {Cases}</br><br>Population: {Population}</br>';
-/* Display a point marker with pop-up text */
-//L.marker([37.35105530964274, -121.95716857910155]).addTo(map).bindPopup('text here'); // EDIT pop-up text messag
-/*
-zipcode.bindPopup(function (x) {
-  return L.Util.template(popupTemplate, x.feature.properties);
-});
-
-zipcode.on('click', function (e) {
-  map.fitbound(e.getBounds());
-});
-
-zipcode.on('mouseover', function (e) {
-  document.getElementById('info-pane').innerHTML = e.layer.feature.properties.zipcode;
-  var layer = e.target;
-});
-*/
-
-/*function query_zipcode(x) {
-
-    zipcode.query().where(x.).run(function (error, featureCollection, response) {
-      if (error) {
-        console.log(error);
-        return;
-      }
-      console.log(featureCollection.featur
-      es[0].properties.zipcode);
-    })
-
-
-}
-*/

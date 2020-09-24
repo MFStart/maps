@@ -20,23 +20,17 @@ $(document).ready(function(){
                     }
                 }
             }
-
             // CREATE DYNAMIC TABLE.
             var table = document.createElement("table");
-
             // CREATE HTML TABLE HEADER ROW USING THE EXTRACTED HEADERS ABOVE.
-
             var tr = table.insertRow(-1);                   // TABLE ROW.
-
             for (var i = 0; i < col.length; i++) {
                 var th = document.createElement("th");      // TABLE HEADER.
                 th.innerHTML = col[i];
                 tr.appendChild(th);
             }
-
             // ADD JSON DATA TO THE TABLE AS ROWS.
             for (var i = 0; i < arrItems.length; i++) {
-
                 tr = table.insertRow(-1);
 
                 for (var j = 0; j < col.length; j++) {
