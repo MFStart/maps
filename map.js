@@ -1,5 +1,6 @@
 
- function getcolor(x,id) {
+//changed?
+function getcolor(x, id) {
    //returns symbology by color breaks
    var color = [];
    var breaks = [-Infinity , 10,50,300,500,800,1000, Infinity];
@@ -27,8 +28,6 @@ function style(c, id) {
     fillOpacity: .45
   };
 }
-
-
 
 
 
