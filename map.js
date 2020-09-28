@@ -7,9 +7,9 @@
     case 'zip':
       color = ['#ffffcc', '#ffffb2', '#fed976', '#fd8d3c', '#fc4e2a', '#e31a1c', '#b10026'];
       break;
-    case 'city':
+    /*case 'city':
       color = ['#ffffec', '#dadaeb', '#bcbddc', '#9e9ac8', '#756bb1', '#6a51a3', '#4a1486'];
-      break;
+      break;*/
     }
    for (var y = 0; y< breaks.length; y++){
     if (x > breaks[y] && x<= breaks[y+1])
@@ -117,7 +117,7 @@ $.when(zip,city).done(()=> {
   var cityshape= new L.geoJSON(city.responseJSON,{
         onEachFeature: (feature, layer)=> {
         var c_cases,c_pop;
-        let c_shape_name = 'city'
+        let c_shape_name = 'zip'
           city_table.forEach((row)=> {
             var name = feature.properties.NAME.toLowerCase();
               if (name == row['key']['city'].toLowerCase()){
@@ -201,11 +201,21 @@ $.when(zip,city).done(()=> {
   var terrain = L.tileLayer('https://stamen-tiles.a.ssl.fastly.net/terrain/{z}/{x}/{y}.png', {
   attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.'
   });
+  var darkmap = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+	attribution: '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
+});
+
+
   let based= {
       "Light": light,
-      "Terrain": terrain
+      "Landscape": terrain,
+      "Dark mode": darkmap
       //define feature layers
   };
+  /*add base map on night mode */
+
+
+
   let layers={
     "By Zipcode": zipshape.addTo(map),
     "By City": cityshape
@@ -235,7 +245,19 @@ $.when(zip,city).done(()=> {
    let citylegend =L.control({position: "bottomright"});
      citylegend.onAdd = function(){
          let div = L.DomUtil.create("div", "legend");
-         div.innerHTML =
+         div.innerHTML ='<b>Covid Cases by Zipcode</b><br>' +
+         '<small>Cases</small><br>' +
+         '<i style="background-color: #b10026"></i>1000+<br>' +
+         '<i style="background-color: #e31a1c"></i>800 - 1000<br>' +
+         '<i style="background-color: #fc4e2a"></i>500 - 800<br>' +
+         '<i style="background-color: #fd8d3c"></i>300 - 500<br>' +
+         '<i style="background-color: #fed976"></i>50 - 300<br>' +
+         '<i style="background-color: #ffffb2"></i>10 - 50<br>' +
+         '<i style="background-color: #ffffec"></i>0 - 10<br>';
+
+
+
+         /*
           '<b>Covid Cases by City</b><br>' +
           '<small>Cases</small><br>' +
           '<i style="background-color: #4a1486"></i>1000+<br>' +
@@ -244,7 +266,7 @@ $.when(zip,city).done(()=> {
           '<i style="background-color: #9e9ac8"></i>300 - 500<br>' +
           '<i style="background-color: #bcbddc"></i>50 - 300<br>' +
           '<i style="background-color: #dadaeb"></i>10 - 50<br>' +
-          '<i style="background-color: #ffffec"></i>0 - 10<br>';
+          '<i style="background-color: #ffffec"></i>0 - 10<br>';*/
       return div;
     }
 
