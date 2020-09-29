@@ -1,5 +1,5 @@
 //live santa clara dataType
-
+//using D3.js to display table. The code is too obfusticated, therefore deprecate until further practice on D3
 
 d3.json("https://data.sccgov.org/resource/j2gj-bg6c.json", function(data) {
     let html;
