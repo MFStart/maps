@@ -5,12 +5,9 @@ function getcolor(x, id) {
    var color = [];
    var breaks = [-Infinity , 10,50,300,500,800,1000, Infinity];
    switch (id){
-    case 'zip':
+    case 'red':
       color = ['#ffffcc', '#ffffb2', '#fed976', '#fd8d3c', '#fc4e2a', '#e31a1c', '#b10026'];
       break;
-    /*case 'city':
-      color = ['#ffffec', '#dadaeb', '#bcbddc', '#9e9ac8', '#756bb1', '#6a51a3', '#4a1486'];
-      break;*/
     }
    for (var y = 0; y< breaks.length; y++){
     if (x > breaks[y] && x<= breaks[y+1])
@@ -116,7 +113,7 @@ $.when(zip,city).done(()=> {
   var cityshape= new L.geoJSON(city.responseJSON,{
         onEachFeature: (feature, layer)=> {
         var c_cases,c_pop;
-        let c_shape_name = 'zip'
+        let c_shape_legend = 'red'
           city_table.forEach((row)=> {
             var name = feature.properties.NAME.toLowerCase();
               if (name == row['key']['city'].toLowerCase()){
@@ -127,7 +124,7 @@ $.when(zip,city).done(()=> {
               city_coords.set(feature.properties.NAME,coords);//another dictionary for storing key: zipcode value: coordinates
           });
           layer.bindPopup('<h3>'+feature.properties.NAME+'</h3>'+'Population: '+c_pop+'<br>'+'Cases: '+c_cases+'</p>');
-          layer.setStyle(style(c_cases,c_shape_name));
+          layer.setStyle(style(c_cases, c_shape_legend));
           //center to the clicked feature and highlights the feature
           layer.addEventListener('click',(d)=>{
            setTimeout(()=>{
@@ -139,7 +136,7 @@ $.when(zip,city).done(()=> {
             map.panTo(d.target.getBounds().getCenter());
           });
           layer.on('popupclose',()=>{
-          layer.setStyle(style(c_cases,c_shape_name));
+          layer.setStyle(style(c_cases,c_shape_legend));
           });
         }
       });
@@ -147,7 +144,7 @@ $.when(zip,city).done(()=> {
   //zipcode layer + covid table data
   var zipshape = new L.geoJSON(zip.responseJSON,{
     onEachFeature: (feature, layer)=> {
-    let z_shape_name  = 'zip' //identifier
+    let z_shape_legend  = 'red' //identifier
     var z_cases,z_pop; //place holder for cases and population from covid table
 
     //loaded the json table into separate dictioanry -> temp variables
@@ -164,7 +161,7 @@ $.when(zip,city).done(()=> {
     //var dis = table2.get(feature.properties.ZCTA); // this is to get the coordinates value by ZCTA as key
       layer.bindPopup('<h3>'+feature.properties.ZCTA+'</h3>'+'<p>'+'Population: '+z_pop+'<br>'+'Cases: '+z_cases+'</p>');
     //set hover color
-      layer.setStyle(style(z_cases,z_shape_name));
+      layer.setStyle(style(z_cases,z_shape_legend));
     //layer.addEventListener('mouseover', highlightfeature);
     //reset the style hover feature
     //layer.addEventListener('mouseout', function(){layer.setStyle(style(cases))});
@@ -180,7 +177,7 @@ $.when(zip,city).done(()=> {
         map.panTo(d.target.getBounds().getCenter());
       });
       layer.on('popupclose',()=>{
-        layer.setStyle(style(z_cases,z_shape_name));
+        layer.setStyle(style(z_cases,z_shape_legend));
       });
     /*,
     onclicked:(feature,layer)=>{

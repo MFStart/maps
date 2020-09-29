@@ -16,12 +16,39 @@
   margin:0 auto;
 }
 
+h1 {
+ text-align: center;
+}
 
-/*
-Generic Styling, for Desktops/Laptops
-*/
+input[type=button] {
+    background-color: #ffffff;
+    text-align: center;
+    border: solid;
+    display: inline-block;
+    cursor: pointer;
+    margin: 3px 3px;
+    padding: 6px 6px;
+    font-size: 18px;
+    transition-duration: 0.5s;
+}
+input[type=button]:hover{
+        background-color: #aaaaaa;
+        text-align: center;
+        border: solid;
+        display: inline-block;
+        cursor: pointer;
+        margin: 3px 3px;
+        padding: 6px 6px;
+        font-size: 18px;
+        transition-duration: 0.5s;
+ }
+    input[type=button]:active {
+    border: 2px solid #ffd659;
+    }
+
 table {
-  poistion: abosolute;
+  float: none;
+  poistion: absolute;
   border-collapse: collapse;
 }
 tr:hover td{
