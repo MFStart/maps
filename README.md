@@ -1,4 +1,4 @@
-Leaflet Covid Maps Using Santa Clara County Covid Data and GeoJSON from County website
+Leaflet Covid Maps Using Santa Clara County Covid Data and GeoJSON from County website</br>
 Module used: Leaflet and JQuery
 
 8/4/2020 - 9/28/2020 (first time using javascript/html/CSS5) 
